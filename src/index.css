@@ -1,0 +1,487 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+/* ==================================================
+   VARIABLES & THEME
+   ================================================== */
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #121212;
+  --text-main: #f5f5f3;
+  --text-muted: #8e8e8e;
+  --border-color: rgba(245, 245, 243, 0.12);
+  --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --menu-btn-size: 64px;
+}
+
+/* ==================================================
+   GLOBAL RESETS
+   ================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-primary);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ==================================================
+   PAGE BACKGROUND BLUR (ACTIVE WHEN MENU IS OPEN)
+   ================================================== */
+.main-content {
+  transition: filter 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: center center;
+  will-change: filter, transform;
+}
+
+.main-content.menu-blurred {
+  filter: blur(16px) brightness(0.65);
+  transform: scale(0.99);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ==================================================
+   FLOATING CIRCULAR MENU BUTTON
+   ================================================== */
+.menu-btn {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  width: var(--menu-btn-size);
+  height: var(--menu-btn-size);
+  border-radius: 50%;
+  background-color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.menu-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+.menu-line {
+  width: 24px;
+  height: 2px;
+  background-color: var(--bg-primary);
+  border-radius: 2px;
+  transform-origin: center;
+}
+
+/* ==================================================
+   FROSTED GLASS FULLSCREEN MENU OVERLAY
+   ================================================== */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 890;
+  background-color: rgba(5, 5, 5, 0.45);
+  -webkit-backdrop-filter: blur(28px);
+  backdrop-filter: blur(28px);
+  pointer-events: auto;
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(14, 14, 14, 0.72) 40%,
+    rgba(6, 6, 6, 0.88) 100%
+  );
+  -webkit-backdrop-filter: blur(36px) saturate(140%);
+  backdrop-filter: blur(36px) saturate(140%);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Aligns content upwards instead of spreading edge-to-edge */
+  padding: clamp(2rem, 5vh, 4.5rem) clamp(2rem, 7vw, 7rem) clamp(1.5rem, 3vh, 3rem);
+  overflow: hidden;
+}
+
+/* ==================================================
+   NAVIGATION LINKS & BLUR-TEXT STYLES
+   ================================================== */
+.menu-links {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  z-index: 10;
+  margin-top: -2vh; /* Pulls the stack slightly higher towards the top */
+}
+
+.menu-item {
+  overflow: hidden;
+  padding: 0;
+  line-height: 0.96; /* Tighter line-height keeps items compact */
+}
+
+/* Base Link Button with Underline Setup */
+/* Base Link Button with Underline Setup */
+.menu-link {
+  position: relative;
+  display: inline-block;
+  font-size: clamp(2.6rem, 6.2vw, 5.4rem); /* Scaled down slightly so all 5 fit easily */
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.1rem 0;
+  text-align: left;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), color 0.4s ease;
+}
+
+.menu-link:hover {
+  transform: translateX(10px);
+  color: #dfdfdc;
+}
+
+/* Left-to-Right Underline Reveal (Smooth & Deliberate) */
+/* Left-to-Right Underline Reveal (Smooth & Deliberate) */
+.menu-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-main);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.menu-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* Character Split Positioning for BlurText */
+.blur-text-container {
+  display: inline-flex;
+  white-space: pre;
+}
+
+.blur-text-segment {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
+/* ==================================================
+   MENU FOOTER
+   ================================================== */
+.menu-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 2.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  z-index: 10;
+}
+
+.menu-footer-label {
+  color: #7a7a7a;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.45rem;
+}
+
+.menu-footer-email {
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+.menu-footer-links a {
+  color: var(--text-main);
+  text-decoration: none;
+  margin-right: 1.8rem;
+  font-size: 0.9rem;
+  transition: opacity 0.2s ease;
+}
+
+.menu-footer-links a:last-child {
+  margin-right: 0;
+}
+
+.menu-footer-links a:hover {
+  opacity: 0.55;
+}
+
+/* ==================================================
+   PAGE STRUCTURE & COMMON LAYOUTS
+   ================================================== */
+.section-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: clamp(4rem, 10vh, 9rem) clamp(1.5rem, 5vw, 4rem);
+}
+
+.section-tag {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+  display: inline-block;
+}
+
+.separator {
+  width: 100%;
+  height: 1px;
+  background: var(--border-color);
+}
+
+/* ==================================================
+   HERO SECTION
+   ================================================== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-title {
+  font-size: clamp(3.2rem, 8.5vw, 8.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+}
+
+.hero-subtext {
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--text-muted);
+  max-width: 650px;
+  line-height: 1.6;
+  margin-bottom: 3.5rem;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 4rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 2rem;
+}
+
+.hero-meta div span {
+  display: block;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+/* ==================================================
+   ABOUT SECTION
+   ================================================== */
+.about-statement {
+  font-size: clamp(1.8rem, 3.8vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  max-width: 1050px;
+  color: var(--text-main);
+  margin-bottom: 3rem;
+}
+
+/* ==================================================
+   WORK / PROJECTS SECTION
+   ================================================== */
+.project-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 3rem 0;
+  border-top: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-main);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  position: relative;
+}
+
+.project-row:hover {
+  transform: translateX(10px);
+}
+
+.project-left {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(1.5rem, 4vw, 4rem);
+}
+
+.project-index {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.project-name {
+  font-size: clamp(2rem, 4.5vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.project-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 0.5rem;
+}
+
+.project-desc {
+  color: var(--text-muted);
+  font-size: 1rem;
+  max-width: 320px;
+}
+
+.project-tag {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* ==================================================
+   SKILLS SECTION
+   ================================================== */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+  margin-top: 1.5rem;
+}
+
+.skill-category h3 {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.skill-category ul {
+  list-style: none;
+}
+
+.skill-category li {
+  font-size: 1.4rem;
+  font-weight: 500;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(245, 245, 243, 0.05);
+}
+
+/* ==================================================
+   CONTACT SECTION
+   ================================================== */
+.contact-header {
+  font-size: clamp(3rem, 7vw, 7rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 3rem;
+}
+
+.contact-email {
+  font-size: clamp(1.4rem, 3vw, 2.5rem);
+  color: var(--text-main);
+  text-decoration: none;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  display: inline-block;
+  margin-bottom: 4rem;
+  transition: border-color 0.3s ease;
+}
+
+.contact-email:hover {
+  border-color: var(--text-main);
+}
+
+.contact-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ==================================================
+   RESPONSIVE ADJUSTMENTS
+   ================================================== */
+@media (max-width: 768px) {
+  :root {
+    --menu-btn-size: 56px;
+  }
+  .menu-btn {
+    top: 20px;
+    right: 20px;
+  }
+  .menu-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .project-row {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .project-right {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .hero-meta {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .contact-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
