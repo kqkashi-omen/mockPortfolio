@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import FullscreenMenu from './components/FullscreenMenu';
+import SpotlightReveal from './components/SpotlightReveal';
 import Hero from './components/Hero';
 import About from './components/About';
 import Work from './components/Work';
@@ -23,6 +24,9 @@ export default function App() {
 
   return (
     <div className="portfolio-app">
+      {/* Ambient Spotlight Layer */}
+      <SpotlightReveal />
+
       <Navbar isOpen={menuOpen} setIsOpen={setMenuOpen} />
       <FullscreenMenu isOpen={menuOpen} setIsOpen={setMenuOpen} />
 

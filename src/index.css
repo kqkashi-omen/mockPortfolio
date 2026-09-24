@@ -462,12 +462,61 @@ body {
   color: var(--text-muted);
 }
 
+
+/* ==================================================
+   TOP-LEFT LOGO POSITIONING
+   ================================================== */
+.navbar-top-left {
+  position: absolute; /* Changes from fixed -> scrolls away with the first page */
+  top: 24px;
+  left: clamp(1.5rem, 4vw, 3.5rem);
+  z-index: 950;
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-logo-link:hover {
+  opacity: 0.8;
+  transform: scale(1.04);
+}
+
+.nav-logo {
+  /* Scaled up from 44px to 68px-82px so the artwork commands equal presence */
+  height: clamp(58px, 6.5vw, 78px);
+  width: auto;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  /* Crisp rendering for hand-drawn vectors/raster strokes */
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.4));
+}
+
 /* ==================================================
    RESPONSIVE ADJUSTMENTS & MOBILE PERFORMANCE
    ================================================== */
 @media (max-width: 768px) {
   :root {
     --menu-btn-size: 56px;
+  }
+
+  /* Mobile Logo Corner Alignment */
+  .navbar-top-left {
+    top: 18px;
+    left: 18px;
+  }
+
+  .nav-logo {
+    height: 32px;
   }
 
   .menu-btn {
@@ -547,5 +596,94 @@ body {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+  }
+}
+
+/* ==================================================
+   GLOBAL SANDY / GRAIN TEXTURE (FULL PAGE)
+   ================================================== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  /* Procedural SVG micro-sand noise */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999; /* Overlays the viewport with a soft editorial film grain */
+  opacity: 0.85;
+}
+
+/* ==================================================
+   PREMIUM SPOTLIGHT REVEAL WITH SANDY DEPTH
+   ================================================== */
+.spotlight-layer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: mask-image, -webkit-mask-image;
+  overflow: hidden;
+}
+
+/* Rich tactile underlayer that gets exposed inside the spotlight */
+.spotlight-underlayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #121212;
+  /* Multi-layered sand grain + architectural grid + luminous radial falloff */
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.09'/%3E%3C/svg%3E"),
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.95) 100%);
+  background-size: 180px 180px, 40px 40px, 40px 40px, 100% 100%;
+  opacity: 0.95;
+}
+
+/* Glowing center specular core to make the spotlight feel alive */
+.spotlight-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.03) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+/* Maintain transparency so the textured spotlight reveals properly */
+body {
+  background-color: transparent;
+}
+
+html {
+  background-color: var(--bg-primary);
+}
+
+.main-content {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+/* Disable spotlight on touch screens for 60fps mobile scrolling */
+@media (max-width: 768px), (pointer: coarse) {
+  .spotlight-layer {
+    display: none !important;
   }
 }
