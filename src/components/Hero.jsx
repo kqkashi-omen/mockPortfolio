@@ -1,5 +1,5 @@
 import React from 'react';
-import portraitImg from '../assets/hero-portrait.png';
+import portraitImg from '../assets/hero-portrait.webp';
 
 export default function Hero() {
   return (
@@ -23,7 +23,12 @@ export default function Hero() {
             <img 
               src={portraitImg} 
               alt="Ayushman Mahananda Portrait" 
-              className="hero-portrait-img" 
+              className="hero-portrait-img"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              width="500"
+              height="500"
             />
           </div>
         </div>
