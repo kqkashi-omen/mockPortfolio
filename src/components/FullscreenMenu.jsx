@@ -2,34 +2,44 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BlurText from './BlurText';
 
-const overlayVariants = {
-  initial: {
-    clipPath: 'circle(0% at calc(100% - 64px) 64px)',
-    opacity: 0,
-  },
-  animate: {
-    clipPath: 'circle(160% at calc(100% - 64px) 64px)',
-    opacity: 1,
-    transition: {
-      duration: 1.1,
-      ease: [0.22, 1, 0.36, 1],
+// Smooth, cinematic expansion curves matching desktop feel
+const getOverlayVariants = () => {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  // Button sits at top: 18px, right: 18px (center is ~46px) on mobile; top: 32px, right: 32px on desktop (~64px center)
+  const origin = isMobile ? 'calc(100% - 46px) 46px' : 'calc(100% - 64px) 64px';
+
+  return {
+    initial: {
+      clipPath: `circle(0% at ${origin})`,
+      opacity: 0.2,
     },
-  },
-  exit: {
-    clipPath: 'circle(0% at calc(100% - 64px) 64px)',
-    opacity: 0,
-    transition: {
-      duration: 0.45,
-      ease: [0.32, 0, 0.67, 0],
+    animate: {
+      clipPath: `circle(165% at ${origin})`,
+      opacity: 1,
+      transition: {
+        duration: 1.15, // Slow, elegant cinematic unfold
+        ease: [0.16, 1, 0.3, 1],
+      },
     },
-  },
+    exit: {
+      clipPath: `circle(0% at ${origin})`,
+      opacity: 0,
+      transition: {
+        duration: 0.48, // Snappy exit
+        ease: [0.32, 0, 0.67, 0],
+      },
+    },
+  };
 };
 
 const backdropVariants = {
   initial: { opacity: 0 },
   animate: {
     opacity: 1,
-    transition: { duration: 0.7, ease: 'easeOut' },
+    transition: { 
+      duration: 0.85, // Slower fade-in to sync smoothly with the expanding circle
+      ease: [0.16, 1, 0.3, 1] 
+    },
   },
   exit: {
     opacity: 0,
@@ -61,6 +71,7 @@ export default function FullscreenMenu({ isOpen, setIsOpen }) {
     <AnimatePresence>
       {isOpen && (
         <>
+          {/* Static frosted backdrop layer (smooth fade sync) */}
           <motion.div
             className="menu-backdrop"
             variants={backdropVariants}
@@ -69,12 +80,20 @@ export default function FullscreenMenu({ isOpen, setIsOpen }) {
             exit="exit"
           />
 
+          {/* Smooth Expanding Overlay */}
           <motion.div
             className="menu-overlay"
-            variants={overlayVariants}
+            variants={getOverlayVariants()}
             initial="initial"
             animate="animate"
             exit="exit"
+            style={{
+              willChange: 'clip-path, opacity',
+              transform: 'translate3d(0, 0, 0)',
+              WebkitTransform: 'translate3d(0, 0, 0)',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+            }}
           >
             <nav className="menu-links">
               {navItems.map((item, index) => (
@@ -84,15 +103,10 @@ export default function FullscreenMenu({ isOpen, setIsOpen }) {
                     className="menu-link"
                     onClick={(e) => handleNavigation(e, item.href)}
                   >
-                    {/* 
-                      - Starts 0.45s after click (letting the circle expand first)
-                      - Each row starts 0.12s after the previous row
-                      - Each letter floats in with a deliberate 0.055s wave
-                    */}
                     <BlurText
                       text={item.label}
-                      baseDelay={0.45 + index * 0.12}
-                      delay={0.055}
+                      baseDelay={0.45 + index * 0.08} // Staggered to reveal as the circle sweeps past
+                      delay={0.035}
                       direction="bottom"
                       animateBy="characters"
                     />
@@ -103,11 +117,11 @@ export default function FullscreenMenu({ isOpen, setIsOpen }) {
 
             <motion.div
               className="menu-footer"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{
                 opacity: 1,
                 y: 0,
-                transition: { delay: 1.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                transition: { delay: 0.85, duration: 0.5, ease: [0.16, 1, 0.3, 1] },
               }}
               exit={{ opacity: 0, y: 10, transition: { duration: 0.2 } }}
             >
