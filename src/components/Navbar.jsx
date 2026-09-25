@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo.webp';
 
 export default function Navbar({ isOpen, setIsOpen }) {
   const handleScrollToTop = (e) => {
